@@ -1,0 +1,397 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  --drawer-width: 0px;
+  --gap: 0px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color: #213547;
+    --background-color: #fff;
+    --backvariant: #1c1c1c;
+    --veil: rgba(0, 0, 0, 0.08);
+    --disabled: #21354728;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color: rgba(255, 255, 255, 0.87);
+    --background-color: #232323;
+    --backvariant: #1c1c1c;
+    --veil: rgba(255, 255, 255, 0.15);
+    --disabled: rgba(255, 255, 255, 0.25);
+  }
+
+  button:disabled > svg > path {
+    color: #aaa !important;
+  }
+
+  span.css-1yjjitx-MuiSwitch-track {
+    background-color: #ddd;
+  }
+
+  div.tags > div {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-color);
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+@media (prefers-color-scheme: dark) {
+  button.liked {
+    color: #98fb98;
+    background-color: #003300;
+  }
+  button.unliked {
+    color: #778899;
+    background-color: #303030;
+  }
+
+  tr:nth-child(2n) {
+    background-color: rgb(45, 52, 58);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  button.liked {
+    background-color: #98fb98;
+    color: #006600;
+  }
+  button.unliked {
+    color: LightSlateGray;
+    background-color: #f0f0f0;
+  }
+  tr:nth-child(2n) {
+    background-color: #fafafa;
+  }
+}
+button.liked,
+button.unliked {
+  min-width: 10ch;
+}
+
+header.css-hip9hq-MuiPaper-root-MuiAppBar-root {
+  column-gap: 2px;
+  background-color: var(--backvariant);
+}
+
+header button {
+  margin: 4px !important;
+}
+
+footer {
+  background-color: var(--backvariant);
+}
+
+footer p,
+footer input,
+footer div {
+  color: white !important;
+}
+
+footer button:enabled > svg > path,
+footer > div > div > svg {
+  fill: white !important;
+}
+
+footer button:disabled > svg > path {
+  fill: rgba(255, 255, 255, 0.25);
+}
+
+tr.task > td button:enabled > svg > path {
+  fill: var(--color);
+}
+
+header img {
+  height: 50px;
+}
+
+body {
+  max-width: 1024px;
+  margin: auto;
+}
+
+div.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+main.app-body {
+  padding: 0px;
+  position: absolute;
+  top: 64px;
+  height: calc(100% - 64px);
+}
+
+main.app-body,
+div.todo,
+div.done,
+div.todo > div:last-child,
+div.done > div:first-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+div.todo > div:nth-child(2) > div:first-child,
+div.done > div:first-child > div:first-child {
+  flex: 1;
+}
+
+button:enabled > span,
+label {
+  color: var(--color) !important;
+}
+
+button:enabled > span > svg > path {
+  fill: var(--color);
+}
+
+button:disabled > span {
+  color: var(--disabled) !important;
+}
+
+button:disabled > span > svg > path {
+  fill: var(--disabled) !important;
+}
+
+div.css-4t3x6l-MuiPaper-root-MuiDrawer-paper,
+div.css-12i7wg6-MuiPaper-root-MuiDrawer-paper,
+div.css-1ps6pg7-MuiPaper-root,
+td,
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-color: var(--background-color) !important;
+  color: var(--color) !important;
+}
+
+div.css-1futezt-MuiTypography-root {
+  margin-left: 8px;
+}
+
+div.css-v4u5dn-MuiInputBase-root-MuiInput-root:before {
+  border-bottom: 1px solid var(--color) !important;
+}
+button:enabled > span,
+label,
+span.css-1c32n2y-MuiBadge-root {
+  color: var(--color) !important;
+}
+
+nav.tags > div > div {
+  position: relative;
+}
+
+nav.tags > div {
+  height: 100%;
+}
+
+nav.tags {
+  width: var(--drawer-width);
+  height: calc(100% - 64px);
+}
+
+div.tags-list {
+  background-color: var(--background-color);
+  color: var(--color);
+}
+
+@media (min-width: 0px) {
+  main.app-body {
+    width: 100%;
+  }
+  .temp-list {
+    display: block;
+  }
+  .perm-list {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) {
+  main.app-body {
+    width: calc(100% - (var(--drawer-width) + var(--gap)));
+    left: calc(var(--drawer-width) + var(--gap));
+  }
+  .temp-list {
+    display: none;
+  }
+  .perm-list {
+    display: block;
+  }
+}
+
+.temp-list {
+  position: relative;
+}
+
+table.css-quj9j6-MuiTable-root {
+  min-width: initial !important;
+}
+
+div.tags {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+}
+
+td.css-1ex1afd-MuiTableCell-root {
+  padding: 3px;
+}
+
+td.min {
+  width: 40px;
+}
+
+div.css-7nnn4w {
+  margin: 6px;
+}
+
+span.MuiChip-label {
+  color: var(--color) !important;
+}
+
+div.css-1a9jshs-MuiButtonBase-root-MuiChip-root {
+  background-color: var(--veil);
+}
+
+div.icon {
+  padding: 0px 6px;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.search {
+  flex: 1;
+  position: relative;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.15);
+  margin-right: 8px;
+  margin-left: 0px;
+  width: 80%;
+  left: 20px;
+}
+
+div.search:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+div.search > div > input {
+  color: white;
+  caret-color: rgba(198, 198, 198, 0.05);
+}
+
+div.search > div > svg > path {
+  fill: white;
+}
+
+div.filter {
+  color: inherit;
+  width: 100%;
+}
+
+div.filter > input {
+  padding-left: 32px;
+  padding-right: 4px;
+  width: 100%;
+}
+
+div.app {
+  position: relative;
+}
+
+div.css-4t3x6l-MuiPaper-root-MuiDrawer-paper {
+  width: var(--drawer-width);
+}
+
+button.visibility,
+button.tagsdd {
+  padding: 4px;
+}
+
+button.visibility > span,
+button.tagsdd > span {
+  margin: 2px;
+}
+
+div.new {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+}
+
+div.new > div:first-child {
+  flex: 1;
+  margin: 2px;
+}
+
+div.new input {
+  color: var(--color);
+}
+
+.skdb-dev-console-draggable {
+  z-index: 1500;
+}
+
+div.tag {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+  padding-left: 8px;
+}
+
+div.tag > button:enabled > svg {
+  fill: var(--color);
+}
+
+div.users ul[role="menu"] svg {
+  fill: var(--color);
+}

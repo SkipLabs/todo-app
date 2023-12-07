@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "strictNullChecks": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "incremental": true
+  }
+}
