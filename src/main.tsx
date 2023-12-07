@@ -9,12 +9,14 @@ async function init() {
 
   await remoteDb.schema(
     "CREATE TABLE tasks (id STRING PRIMARY KEY, name STRING, complete INTEGER, skdb_access STRING);",
+    "CREATE TABLE tags (id STRING PRIMARY KEY, name STRING, skdb_access STRING);",
+    "CREATE TABLE tasks_tags (task_id STRING, tag_id STRING, skdb_access STRING);",
   );
 
   const connect = async (userID: string = "root") => {
     const localDb = await createLocalDbConnectedTo(remoteDb, userID);
 
-    await localDb.mirror("tasks");
+    await localDb.mirror("tasks", "tags", "tasks_tags");
 
     return localDb;
   };
