@@ -33,6 +33,11 @@ interface Task {
   complete: number;
 }
 
+interface Tag {
+  id: string;
+  name: string;
+}
+
 function TasksTable({
   completed,
   option,
@@ -120,9 +125,13 @@ function TaskRow({ task }: { task: Task }) {
   return (
     <TableRow className="task">
       <TableCell>
+        <Tags task={task} />
         <Typography noWrap component="div">
           {task.name}
         </Typography>
+      </TableCell>
+      <TableCell className="min">
+        <TagDropdown task={task} />
       </TableCell>
       <TableCell className="min">
         <IconButton title="Delete" onClick={(_e) => del(task.id)}>
@@ -270,6 +279,15 @@ function Header({
     <Box>
       <AppBar position="static">
         <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
           <img src={logo} />
           <Typography
             variant="h6"
@@ -324,8 +342,206 @@ function App() {
           handleDrawerToggle={handleDrawerToggle}
         />
         <Body option={option} />
+        <TagDrawer
+          mobileOpen={mobileOpen}
+          handleDrawerToggle={handleDrawerToggle}
+        />
       </div>
     </>
+  );
+}
+
+/************** TAGS ****************/
+
+function TagDrawer({
+  mobileOpen,
+  handleDrawerToggle,
+}: {
+  mobileOpen: boolean;
+  handleDrawerToggle: () => void;
+}) {
+  const drawer = (
+    <div>
+      <AddTags />
+      <Divider />
+      <TagsList />
+    </div>
+  );
+  return (
+    <Box component="nav" className="tags">
+      <Drawer
+        variant="temporary"
+        className="tags-list temp-list"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        sx={{ position: "relative" }}
+      >
+        {drawer}
+      </Drawer>
+      <Drawer variant="permanent" className="tags-list perm-list" open>
+        {drawer}
+      </Drawer>
+    </Box>
+  );
+}
+
+function AddTags() {
+  const skdb = useSKDB();
+  const [tagName, setTagName] = useState("");
+  const isEmpty = useMemo(() => tagName.length == 0, [tagName]);
+
+  const handleTagName = (e: any) => {
+    setTagName(e.target.value);
+  };
+  const addTag = async (name: string) => {
+    if (isEmpty) {
+      return;
+    }
+    skdb.exec(
+      "INSERT INTO tags (name, skdb_access) VALUES (@name, 'read-write');",
+      { name },
+    );
+    setTagName("");
+  };
+
+  // 13 is keycode for enter
+  const onKeyDown = ({ keyCode }: { keyCode: number }) => {
+    if (keyCode == 13) addTag(tagName);
+  };
+  return (
+    <Box className="new">
+      <TextField
+        placeholder="Enter the new tag name"
+        label="Tag name"
+        variant="standard"
+        onChange={handleTagName}
+        value={tagName}
+        onKeyDown={onKeyDown}
+      />
+      <IconButton
+        disabled={isEmpty}
+        title="Add Tag"
+        onClick={(_e) => addTag(tagName)}
+      >
+        <AddIcon />
+      </IconButton>
+    </Box>
+  );
+}
+
+function TagsList() {
+  const tags = useQuery("SELECT * FROM tags;") as Array<Tag>;
+  return (
+    <Box>
+      {tags.map((tag) => (
+        <TagItem tag={tag} key={tag.id} />
+      ))}
+    </Box>
+  );
+}
+
+function TagItem({ tag }: { tag: Tag }) {
+  const skdb = useSKDB();
+
+  const del = async (tag: Tag) => {
+    skdb.exec("DELETE FROM tags WHERE id = @id;", tag);
+    skdb.exec("DELETE FROM tasks_tags WHERE tag_id = @id;", tag);
+  };
+
+  return (
+    <Box className="tag">
+      <Typography noWrap component="div" sx={{ flex: 1 }}>
+        {tag.name}
+      </Typography>
+      <IconButton title="Delete" onClick={(_e) => del(tag)}>
+        <DeleteIcon />
+      </IconButton>
+    </Box>
+  );
+}
+
+function TagDropdown({ task }: { task: Task }) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const skdb = useSKDB();
+
+  const remainingTags = useQuery(
+    "SELECT * FROM tags WHERE id NOT IN (SELECT tag_id FROM tasks_tags WHERE task_id = @id);",
+    task,
+  );
+  const handleChange = async (id: string) => {
+    skdb.exec("INSERT INTO tasks_tags VALUES (@task, @tag, 'read-write');", {
+      task: task.id,
+      tag: id,
+    });
+    handleClose();
+  };
+  return (
+    <div>
+      <Button
+        className="tagsdd"
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        variant="outlined"
+        disableElevation
+        onClick={handleClick}
+        startIcon={<TagIcon />}
+        endIcon={<KeyboardArrowDownIcon />}
+        disabled={remainingTags.length == 0}
+        title="Tags"
+      ></Button>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        {remainingTags.map((tag: Tag) => (
+          <MenuItem
+            value={tag.id}
+            key={tag.id}
+            onClick={() => {
+              handleChange(tag.id);
+            }}
+          >
+            {tag.name}
+          </MenuItem>
+        ))}
+      </Menu>
+    </div>
+  );
+}
+
+function Tags({ task }: { task: Task }) {
+  const skdb = useSKDB();
+
+  const selectedTags = useQuery(
+    "SELECT * FROM tags WHERE id IN (SELECT tag_id FROM tasks_tags WHERE task_id = @id);",
+    task,
+  );
+  const del = (id: string) => {
+    skdb.exec(
+      "DELETE FROM tasks_tags WHERE task_id = @task_id AND tag_id = @tag_id;",
+      { task_id: task.id, tag_id: id },
+    );
+  };
+
+  return (
+    <div className="tags">
+      {selectedTags.map((tag: Tag) => {
+        const handleDelete = () => del(tag.id);
+        return (
+          <Chip
+            label={tag.name}
+            key={tag.id}
+            size="small"
+            onDelete={handleDelete}
+          />
+        );
+      })}
+    </div>
   );
 }
 

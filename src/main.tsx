@@ -9,16 +9,28 @@ async function init() {
 
   await remoteDb.schema(
     "CREATE TABLE tasks (id TEXT PRIMARY KEY, name TEXT, complete INTEGER, skdb_access TEXT);",
+    "CREATE TABLE tags (id TEXT PRIMARY KEY, name TEXT, skdb_access TEXT);",
+    "CREATE TABLE tasks_tags (task_id TEXT, tag_id TEXT, skdb_access TEXT);",
   );
 
   const connect = async (userID: string = "root") => {
     const localDb = await createLocalDbConnectedTo(remoteDb, userID);
 
-    await localDb.mirror({
-      table: "tasks",
-      expectedColumns:
-        "(id TEXT PRIMARY KEY, name TEXT, complete INTEGER, skdb_access TEXT)",
-    });
+    await localDb.mirror(
+      {
+        table: "tasks",
+        expectedColumns:
+          "(id TEXT PRIMARY KEY, name TEXT, complete INTEGER, skdb_access TEXT)",
+      },
+      {
+        table: "tags",
+        expectedColumns: "(id TEXT PRIMARY KEY, name TEXT, skdb_access TEXT)",
+      },
+      {
+        table: "tasks_tags",
+        expectedColumns: "(task_id TEXT, tag_id TEXT, skdb_access TEXT)",
+      },
+    );
 
     return localDb;
   };
