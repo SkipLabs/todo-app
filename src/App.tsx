@@ -134,6 +134,9 @@ function TaskRow({ task }: { task: Task }) {
         <TagDropdown task={task} />
       </TableCell>
       <TableCell className="min">
+        <Like taskId={task.id} />
+      </TableCell>
+      <TableCell className="min">
         <IconButton title="Delete" onClick={(_e) => del(task.id)}>
           <DeleteIcon />
         </IconButton>
@@ -542,6 +545,42 @@ function Tags({ task }: { task: Task }) {
         );
       })}
     </div>
+  );
+}
+
+/************** LIKES ****************/
+
+function Like(task: { taskId: string }) {
+  const skdb = useSKDB();
+  let currUserLikes = useQuery("SELECT 1 FROM likes WHERE task_id = @taskId", {
+    taskId: task.taskId,
+  });
+
+  const onClick = async () => {
+    const userID = skdb.currentUser;
+    if (currUserLikes.length == 0) {
+      skdb.exec("INSERT INTO likes VALUES (@taskId, @userID, @userID);", {
+        taskId: task.taskId,
+        userID,
+      });
+    } else {
+      skdb.exec("DELETE FROM likes WHERE task_id = @taskId", {
+        taskId: task.taskId,
+      });
+    }
+  };
+
+  let unique_likes = useQuery(
+    "SELECT n FROM unique_likes WHERE task_id = @taskId",
+    { taskId: task.taskId },
+  );
+  let like_count = unique_likes.length == 1 ? unique_likes[0].n : 0;
+  return (
+    <IconButton onClick={(_e) => onClick()}>
+      <Badge badgeContent={like_count} color="success">
+        {currUserLikes.length == 0 ? <HeartIcon /> : <FullHeartIcon />}
+      </Badge>
+    </IconButton>
   );
 }
 
