@@ -1,0 +1,23 @@
+{
+  "name": "skdb-log",
+  "version": "0.0.1",
+  "type": "module",
+  "engines": {
+    "node": ">=20.7.0"
+  },
+  "dependencies": {
+    "skdb": "^0.0.58",
+    "skdb-dev": "^0.1.16"
+  },
+  "sideEffects": false,
+  "author": "SkipLabs",
+  "bin": {
+    "skdb-log": "./dist/skdb-log.js"
+  },
+  "scripts": {
+    "skdb-log": "tsc -p tsconfig.json && node ./dist/skdb-log.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.8"
+  }
+}
