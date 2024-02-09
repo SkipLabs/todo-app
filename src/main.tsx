@@ -16,6 +16,7 @@ async function init() {
        SELECT task_id, COUNT(*) as n FROM
          ( SELECT task_id, skdb_author FROM likes GROUP BY task_id, skdb_author )
        GROUP BY task_id;`,
+    "CREATE VIRTUAL VIEW users AS SELECT userID FROM skdb_users;",
   );
 
   const connect = async (userID: string = "root") => {
@@ -40,8 +41,12 @@ async function init() {
         expectedColumns: "(task_id TEXT, skdb_author TEXT, skdb_access TEXT)",
       },
       { table: "unique_likes", expectedColumns: "(task_id TEXT, n INTEGER)" },
+      {
+        table: "users",
+        expectedColumns: "(userID TEXT)",
+        filterExpr: "'root' <> userID",
+      },
     );
-
     return localDb;
   };
 

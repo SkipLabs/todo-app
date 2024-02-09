@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useSKDB, useQuery } from "skdb-react";
+import { SKDB } from "skdb";
 import "./App.css";
 import logo from "./assets/sk.svg";
 import { AppBar, Box, Toolbar, IconButton, Typography } from "@mui/material";
@@ -36,6 +37,10 @@ interface Task {
 interface Tag {
   id: string;
   name: string;
+}
+
+interface User {
+  userID: string;
 }
 
 function TasksTable({
@@ -156,6 +161,7 @@ function TaskRow({ task }: { task: Task }) {
 function AddTasks() {
   const skdb = useSKDB();
   const [taskName, setTaskName] = useState("");
+  const [accessList, setAccessList] = useState([]);
   const isEmpty = useMemo(() => taskName.length == 0, [taskName]);
 
   const handleTaskName = (e: any) => {
@@ -166,9 +172,10 @@ function AddTasks() {
     if (isEmpty) {
       return;
     }
+    const access_group = await createGroup(skdb, accessList);
     skdb.exec(
-      "INSERT INTO tasks (name, complete, skdb_access) VALUES (@name, 0, 'read-write');",
-      { name },
+      "INSERT INTO tasks (name, complete, skdb_access) VALUES (@name, 0, @access_group);",
+      { name, access_group },
     );
     setTaskName("");
   };
@@ -188,6 +195,7 @@ function AddTasks() {
         value={taskName}
         onKeyDown={onKeyDown}
       />
+      <VisibilityDropdown {...{ accessList, setAccessList }} />
       <IconButton
         disabled={isEmpty}
         title="Add Task"
@@ -391,6 +399,7 @@ function TagDrawer({
 function AddTags() {
   const skdb = useSKDB();
   const [tagName, setTagName] = useState("");
+  const [accessList, setAccessList] = useState([]);
   const isEmpty = useMemo(() => tagName.length == 0, [tagName]);
 
   const handleTagName = (e: any) => {
@@ -400,9 +409,10 @@ function AddTags() {
     if (isEmpty) {
       return;
     }
+    const access_group = await createGroup(skdb, accessList);
     skdb.exec(
-      "INSERT INTO tags (name, skdb_access) VALUES (@name, 'read-write');",
-      { name },
+      "INSERT INTO tags (name, skdb_access) VALUES (@name, @access_group);",
+      { name, access_group },
     );
     setTagName("");
   };
@@ -421,6 +431,7 @@ function AddTags() {
         value={tagName}
         onKeyDown={onKeyDown}
       />
+      <VisibilityDropdown {...{ accessList, setAccessList }} />
       <IconButton
         disabled={isEmpty}
         title="Add Tag"
@@ -581,6 +592,124 @@ function Like(task: { taskId: string }) {
         {currUserLikes.length == 0 ? <HeartIcon /> : <FullHeartIcon />}
       </Badge>
     </IconButton>
+  );
+}
+
+/************** Access Control ****************/
+
+async function createGroup(
+  skdb: SKDB,
+  members: string[],
+  perm: string = "rw",
+): Promise<string> {
+  const userID = skdb.currentUser;
+  const groupID = (
+    await skdb.exec(
+      `BEGIN TRANSACTION;
+         INSERT INTO skdb_groups VALUES (id('groupID'), @userID, @userID, @userID);
+         SELECT id('groupID') AS groupID;
+       COMMIT;`,
+      { userID },
+    )
+  ).scalarValue();
+
+  skdb.exec(
+    "INSERT INTO skdb_group_permissions VALUES (@groupID, @userID, skdb_permission('rw'), @userID)",
+    { groupID, userID },
+  );
+
+  skdb.exec(
+    "UPDATE skdb_groups SET skdb_access = @groupID WHERE groupID = @groupID;",
+    { groupID },
+  );
+
+  for (const member of members) {
+    skdb.exec(
+      "INSERT INTO skdb_group_permissions VALUES (@groupID, @member, skdb_permission(@perm), @groupID)",
+      { groupID, member, perm },
+    );
+  }
+
+  return groupID;
+}
+
+function VisibilityDropdown({
+  accessList,
+  setAccessList,
+}: {
+  accessList: string[];
+  setAccessList: (l: string[]) => void;
+}) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const skdb = useSKDB();
+  const otherUsers = useQuery("SELECT * FROM users WHERE userID <> @userID;", {
+    userID: skdb.currentUser,
+  });
+
+  const handleChange = async (uuid: string) => {
+    if (accessList.includes(uuid)) {
+      setAccessList(accessList.filter((e) => e !== uuid));
+    } else {
+      accessList.push(uuid);
+      setAccessList(accessList);
+    }
+    handleClose();
+  };
+  return (
+    <div>
+      <Badge
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        badgeContent={otherUsers.length}
+        color="primary"
+      >
+        <Badge badgeContent={accessList.length} color="success">
+          <Button
+            className="visibility"
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            variant="outlined"
+            disableElevation
+            onClick={handleClick}
+            startIcon={<VisibilityIcon />}
+            endIcon={<KeyboardArrowDownIcon />}
+            disabled={otherUsers.length == 0}
+            title="Visibility"
+          ></Button>
+        </Badge>
+      </Badge>
+      <Menu
+        className="users"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        {otherUsers.map((user: User) => {
+          return (
+            <MenuItem
+              value={user.userID}
+              key={user.userID}
+              onClick={() => {
+                handleChange(user.userID);
+              }}
+            >
+              <Checkbox checked={accessList.includes(user.userID)} />
+              {user.userID}
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    </div>
   );
 }
 
