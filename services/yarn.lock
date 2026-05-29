@@ -9,24 +9,24 @@
   dependencies:
     undici-types "~5.26.4"
 
-skdb-dev@^0.1.9:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/skdb-dev/-/skdb-dev-0.1.10.tgz#0de27d9136d88b00f0929975fd1a6d5bfab3b31e"
-  integrity sha512-F0SKacgLh46EJ+ChTzuOWQLxLTh6ZHLHRE/rpAu+HJnK8sdJp9PrzpG8m2jDUWQpZ6agHPZnfoLl6lOYjsnGvQ==
+skdb-dev@^0.1.16:
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/skdb-dev/-/skdb-dev-0.1.23.tgz#ae80e0669bee60c0ea95dbf8bb02f62871c2348f"
+  integrity sha512-Hi0c0pkbqb1DE6Y0r5s2bUCTPaiPO6PVob6RxGt4W+WapCybxPihT1IC7+NpSV+1+5X7GMNdxMoqsJ/4rvPBXw==
   dependencies:
-    skdb "^0.0.50"
+    skdb "^0.0.67"
 
-skdb@^0.0.49:
-  version "0.0.49"
-  resolved "https://registry.yarnpkg.com/skdb/-/skdb-0.0.49.tgz#46f71ba9ed035be0da80b1570cc6050b94971468"
-  integrity sha512-meG5Kpl0RLhdVeqjs5FfJsKzhAtC9EMNCOXY5PzhbFz7Oi0c6aNXMLPoU/70O6xm8a2XsdnssRIrW6SnZxb7OQ==
+skdb@^0.0.58:
+  version "0.0.58"
+  resolved "https://registry.yarnpkg.com/skdb/-/skdb-0.0.58.tgz#4869d1dd71a8d940829280cc197ed37bc0f4d00c"
+  integrity sha512-GZS/QHxHbLWCqO8yZCpZrM0VSIq5PGbgr3Ie0oeRb5LdHD/vGxMjOxI8Ft28EcB4ZAszN5c9CCk8K4ulLSAmJQ==
   dependencies:
     ws "^8.12.0"
 
-skdb@^0.0.50:
-  version "0.0.50"
-  resolved "https://registry.yarnpkg.com/skdb/-/skdb-0.0.50.tgz#c013fbee7625030d4db7b765af53c9ecc5ac1bbe"
-  integrity sha512-YJEqZ7WJ4kro/ernodA+kphkb3kwMCIotl6kIDrpCXIc4jjoq2zx/opc+tcc04IFab/s9z8+kWDm112qlqbCSg==
+skdb@^0.0.67:
+  version "0.0.67"
+  resolved "https://registry.yarnpkg.com/skdb/-/skdb-0.0.67.tgz#64330d38920cd3f864e98ba056e14def6beaf9ea"
+  integrity sha512-ZpGnl2B82IWWjZKxmeo0Qb6TkC1UV+fiQ2t96ii8GpIX6tWlABK3vkWOImnle5fPXTai6Z7gp2/8VTQXpiaS0Q==
   dependencies:
     ws "^8.12.0"
 
@@ -36,6 +36,6 @@ undici-types@~5.26.4:
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 ws@^8.12.0:
-  version "8.14.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.14.2.tgz#6c249a806eb2db7a20d26d51e7709eab7b2e6c7f"
-  integrity sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==
+  version "8.21.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.21.0.tgz#012e413fc07429945121b0c153158c4343086951"
+  integrity sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==
